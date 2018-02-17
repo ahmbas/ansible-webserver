@@ -1,0 +1,59 @@
+---
+
+- name: 'Set hostname to {{ hostname }}'
+  hostname:
+    name: '{{ hostname }}'
+
+- name: Install epel-release
+  yum:
+    pkg: epel-release
+    state: installed
+    update_cache: true
+
+- name: 'Open port {{ http_port }} in firewall'
+  firewalld:
+    immediate: true
+    port: '{{ http_port }}/tcp'
+    permanent: true
+    zone: public
+    state: enabled
+
+- name: Install nginx web server and pip
+  yum:
+    name:
+      - nginx
+      - python-pip
+      - policycoreutils-python
+    state: installed
+    update_cache: true
+  notify:
+    - start nginx
+
+- name: Add nginx index.html
+  template:
+    src: index.html.j2
+    dest: /usr/share/nginx/html/index.html
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify:
+    - reload nginx
+
+- name: Add nginx conf
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify:
+    - reload nginx
+
+- name: Add SElinux port
+  seport:
+    ports: '{{ http_port }}'
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when: http_port != item
+  with_items: [8000, 80, 81, 443, 488, 8008, 8009, 8443, 9000]

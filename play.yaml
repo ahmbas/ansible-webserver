@@ -1,0 +1,15 @@
+- hosts: webserver
+  roles:
+    - role: webserver
+  vars:
+    - http_port: 8003
+    - logrotate_scripts:
+      - name: nginx-2
+        path: "/var/log/nginx/*.log"
+        options:
+          - weekly
+          - size 25M
+          - missingok
+          - compress
+          - delaycompress
+          - copytruncate
