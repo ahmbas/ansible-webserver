@@ -6,7 +6,9 @@
 
 - name: Install epel-release
   yum:
-    pkg: epel-release
+    name: 
+      - epel-release
+      - firewalld
     state: installed
     update_cache: true
 
