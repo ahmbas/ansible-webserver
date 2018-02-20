@@ -1,8 +1,8 @@
-- hosts: webserver
+- hosts: all
   roles:
     - role: webserver
   vars:
-    - http_port: 8003
+    - http_port: 80
     - logrotate_scripts:
       - name: nginx-2
         path: "/var/log/nginx/*.log"
