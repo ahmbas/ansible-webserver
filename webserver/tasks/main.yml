@@ -11,6 +11,8 @@
       - firewalld
     state: installed
     update_cache: true
+  notify:
+    - start firewalld
 
 - name: 'Open port {{ http_port }} in firewall'
   firewalld:
